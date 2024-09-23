@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+
 class customer(models.Model):
     LIVE=0
     DELETE=1
@@ -16,4 +17,4 @@ class customer(models.Model):
     updated_at=models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return self.name
+        return self.user.username

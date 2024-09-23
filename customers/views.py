@@ -63,7 +63,7 @@ def customer_login (request):
       print(username,password)
       try:
          user=User.objects.create_user(username=username,password=password,email=email)
-         customer.objects.create(user=user,address=address,phone=phone)
+         customer=customer.objects.create(name=username,user=user,address=address,phone=phone)
       except Exception as e:
          error_message=str(e)
    if request.POST and 'login' in request.POST: 

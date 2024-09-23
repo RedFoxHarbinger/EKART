@@ -1,8 +1,8 @@
 
 <html lang="en">
     {% load static %}
-    {% load multiply %}
-    {% load carttotal %}
+    {% load order_status %}
+   
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,83 +40,49 @@
     
     <!-- Cart items details -->
     <div class="small-container cart-page" style="height: 380px;  flex: 1; overflow-y: auto; padding: 20px; box-sizing: border-box;">
-        {% if cart and cart.added_items.all  %}
+        {% if allorder  %}
         <table>
             <tbody><tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Subtotal</th>
+
+                <th>PRODUCTS</th> 
+                <th>ORDER ID</th>
+                <th>DATE</th>
+                <th>TOTAL AMOUNT</th>
+                <th>ORDER STATUS</th>
+               
             </tr>
-            {% for cart_item in cart.added_items.all %}
+            {% for order in allorder %}
             <tr>
-              
-                <td>
-                   
-                    <div class="cart-info" style="padding: 10px; margin-bottom: 10px; border: 1px solid #ddd;">
-                        
-                        <img src="{{ cart_item.product.image.url }}" alt="">
-                      
-                        <div>
-                           
-                            <p>{{ cart_item.product.title }}</p>
-                            <h3>RS.{{ cart_item.product.price }}</h3>
-                            <small>Display {{ cart_item.product.display_size }} Inch </small>
-                            <br>
-                            <a href="{% url 'deleteitem' cart_item.id %}">Remove</a>
-                        </div>
-                    </div>
-                </td>
-                <td><input type="number" disabled value="{{cart_item.quantity}}"></td>
-                <td>{% multiply cart_item.product.price cart_item.quantity %}</td>
+                
+                <td><div class="cart-info" style="padding: 10px; margin-bottom: 10px; border: 1px solid #ddd;">
+                    <ul>
+                        {% for item in order.added_items.all %}
+                        <li style="margin-bottom: 10px;">
+                            <!-- Link to product page -->
+                            <a href="{% url 'detailedproduct' item.product.id %}"> 
+                                <!-- Display product image -->
+                               <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 50px; height: 50px; object-fit: cover;">
+                                {{ item.product.name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul> </td>
+                    
+                <td>{{ order.id}} </td>     
+                <td>{{ order.created_at}}</td>
+                <td>{{ order.total_cart_amount}}</td>
+                <td>{% order_status order.order_status %}</td>
+           
+            
             </tr>
             {% endfor %} 
-        </tbody></table>
-        <div class="total-price">
-            <table>
-                <tbody><tr>
-                     {% comment "" %}
-                    <td>Subtotal</td>
-                    <td>$200.00</td>
-                </tr>
-                <tr>
-                    <td>Tax</td>
-                    <td>$35.00</td>
-                    {% endcomment %} 
-                </tr>
-                <tr>
-               
-                    <td>Total</td>
-                    
-                    <td>RS.{% carttotal cart %}</td>
-                </tr>
-            </tbody></table>
-            
-        </div>
-        <form method="post" action="{% url 'checkout' %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="hidden" name="total" value="{% carttotal cart %}"/>
 
-        <button type="submit" style="background-color: brown; width: 100px; height: 60px; border-radius: solid; margin-left: 800px; border-style: solid; box-shadow: 0rcap;"><h2>checkout</h2></button>
-       </form>
+            {% else %}
+            <p>no orders found</p>
        
-     
-        {% endif %}
+         {% endif %}
+        </tbody></table>
    
-   
-
-
-    {% if messages %}
-    {% for message in messages %}
- 
-    <div  ><h3 class="{{message.tags}}">{{ message }}</h3></div>
-    {% endfor %}
-    
-
-  {%  elif not cart.added_items.exists  %}
-            <h2 > Cart is empty </h2>
-
-            {% endif %}
-    
         </div>
     <!-- Footer -->
     <div class="footer" style="text-align: center;  padding: 20px; position: relative; bottom: 0; left: 0; width: 100%;">

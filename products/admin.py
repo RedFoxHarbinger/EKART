@@ -1,6 +1,9 @@
 from django.contrib import admin
-from . models import products,pro
+from . models import products
 
 # Register your models here.
-admin.site.register(products)
-admin.site.register(pro)
+@admin.register(products)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ['title', 'price', 'display_size']
+    list_filter = ['display_size']
+    search_fields = ['title']
